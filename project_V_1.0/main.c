@@ -16,7 +16,7 @@ typedef struct
     unsigned long long int account_no;/*the data size is large*/
     char name[100];
     char mail[100];
-    long double balance;
+    double balance;
     char mobile[15];
     date d_open;
 } user;
@@ -79,7 +79,7 @@ void loadAccounts()
         }
         strcpy(accounts[count].mobile, token);
 
-        token = strtok(NULL, ",");
+        token = strtok(NULL, "-");
         if (token == NULL)
         {
             printf("Invalid file format: %s\n", filename);
@@ -87,14 +87,13 @@ void loadAccounts()
         }
 
         accounts[count].d_open.month=atoi(token);
-        token = strtok(",", " - ");
+        token = strtok(NULL, " ");
         if (token == NULL)
         {
             printf("Invalid file format: %s\n", filename);
             break;
         }
         accounts[count].d_open.year = atoi(token);
-
         count++;
         if (count >= MAX_ACCOUNTS)
         {
@@ -136,6 +135,8 @@ int login()
         if (strcmp(username, storedUsername) == 0 && strcmp(password, storedPassword) == 0)
         {
             fclose(file);
+            system("cls");
+            printf("welcome to the system ,%s\n",storedUsername);
             loadAccounts();
             return count;  // Successful login
         }
@@ -144,10 +145,37 @@ int login()
     fclose(file);
     return 0;
 }
+void save(){
+    const char* filename="accounts.txt";
+    int i ;
+    FILE* file = fopen(filename, "w+");
+    if (file == NULL)
+    {
+        printf("Error opening file: %s\n", filename);
+        return 0;
+    }
 
+    for(i=0;i<count;i++){
+
+        fprintf(file,"%llu,%s,%s,%0.2f,%s,%d-%d \n",accounts[i].account_no,accounts[i].name,accounts[i].mail,accounts[i].balance,accounts[i].mobile,accounts[i].d_open.month,accounts[i].d_open.year);
+
+    }
+    printf("\nsaved succesfully\n");
+    fclose(file);
+}
+void quit(){
+    printf("Are you sure thet you want to exit?\n1)yes                  2)no");
+    int val;
+    scanf("%d",&val);
+    if(val==1)
+        exit(1);
+}
 
 int main()
 {
-    printf("number of the users:%d", login());
+    printf("number of the accounts:%d", login());
+    save();
+    quit();
+
     return 0;
 }
