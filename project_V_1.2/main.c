@@ -13,7 +13,7 @@ typedef struct
 } date;
 typedef struct
 {
-    unsigned long long int account_no;/*the data size is large*/
+    char account_no[12];
     char name[100];
     char mail[100];
     double balance;
@@ -45,7 +45,7 @@ void loadAccounts()
             printf("Invalid file format: %s\n", filename);
             break;
         }
-        accounts[count].account_no = strtoull(token, NULL, 10);
+        strcpy(accounts[count].account_no,token);
 
         token = strtok(NULL, ",");
         if (token == NULL)
@@ -157,14 +157,14 @@ void save(){
 
     for(i=0;i<count;i++){
 
-        fprintf(file,"%llu,%s,%s,%0.2f,%s,%d-%d \n",accounts[i].account_no,accounts[i].name,accounts[i].mail,accounts[i].balance,accounts[i].mobile,accounts[i].d_open.month,accounts[i].d_open.year);
+        fprintf(file,"%s,%s,%s,%0.2f,%s,%d-%d \n",accounts[i].account_no,accounts[i].name,accounts[i].mail,accounts[i].balance,accounts[i].mobile,accounts[i].d_open.month,accounts[i].d_open.year);
 
     }
     printf("\nsaved succesfully\n");
     fclose(file);
 }
 void quit(){
-    printf("Are you sure thet you want to exit?\n1)yes                  2)no");
+    printf("Are you sure thet you want to exit?\n1)yes                  2)no\n");
     int val;
     scanf("%d",&val);
     if(val==1)
